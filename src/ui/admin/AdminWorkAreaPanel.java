@@ -5,6 +5,10 @@
 package ui.admin;
 
 import Model.EcoSystem;
+import Model.Enterprise.Enterprise;
+import Model.Network.Network;
+import Model.Organization.Organization;
+import Model.Role.Role;
 import Model.User.UserAccount;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -16,17 +20,28 @@ import javax.swing.JTabbedPane;
  * @author tiankaining
  */
 public class AdminWorkAreaPanel extends javax.swing.JPanel {
-
     private JPanel userProcessContainer;
     private EcoSystem system;
+    private Network network;
+    private Enterprise enterprise;
+    private Organization organization;
     private UserAccount userAccount;
+    private Role role;
+
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
     public AdminWorkAreaPanel(JPanel userProcessContainer, EcoSystem system, UserAccount userAccount) {
         this.userProcessContainer = userProcessContainer;
         this.system = system;
+    // ✅ 初始化默认network/enterprise/org
+    this.network = system.getNetworkDirectory().getAllNetworks().get(0);
+    this.enterprise = network.getEnterpriseDirectory().getEnterpriseList().get(0);
+    this.organization = enterprise.getOrganizations().getOrganizationList().get(0);
         this.userAccount = userAccount;
+//        this.role = role;
+
+        initComponents();
 
         initComponents(); // 初始化按钮等UI
         
@@ -146,87 +161,68 @@ public class AdminWorkAreaPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnManageUserAccountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageUserAccountsActionPerformed
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new ManageUserAccounts(userProcessContainer, getDefaultOrganization()));
-        userProcessContainer.revalidate();
-        userProcessContainer.repaint();
+    ManageUserAccounts panel = new ManageUserAccounts(userProcessContainer, getDefaultOrganization());
+    userProcessContainer.add("ManageUserAccountsPanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "ManageUserAccountsPanel");
     }//GEN-LAST:event_btnManageUserAccountsActionPerformed
 
     private void btnNetworkAdminReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNetworkAdminReportsActionPerformed
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new NetworkAdminReports());
-        userProcessContainer.revalidate();
-        userProcessContainer.repaint();
+    NetworkAdminReports panel = new NetworkAdminReports();
+    userProcessContainer.add("NetworkAdminReportsPanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "NetworkAdminReportsPanel");
     }//GEN-LAST:event_btnNetworkAdminReportsActionPerformed
 
     private void btnManageOrganizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageOrganizationActionPerformed
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new ManageOrganization(userProcessContainer, 
-            getDefaultOrganizationDirectory(), getDefaultEnterprise()));
-        userProcessContainer.revalidate();
-        userProcessContainer.repaint();
+    ManageOrganization panel = new ManageOrganization(
+        userProcessContainer, 
+        getDefaultOrganizationDirectory(), 
+        getDefaultEnterprise()
+    );
+    userProcessContainer.add("ManageOrganizationPanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "ManageOrganizationPanel");
     }//GEN-LAST:event_btnManageOrganizationActionPerformed
 
     private void btnManageNetworkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageNetworkActionPerformed
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new ManageNetwork(userProcessContainer, system));
-        userProcessContainer.revalidate();
-        userProcessContainer.repaint();
+    ManageNetwork panel = new ManageNetwork(userProcessContainer, system);
+    userProcessContainer.add("ManageNetworkPanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "ManageNetworkPanel");
     }//GEN-LAST:event_btnManageNetworkActionPerformed
 
     private void btnManageEnterpriseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageEnterpriseActionPerformed
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new ManageEnterprise(userProcessContainer, getDefaultNetwork()));
-        userProcessContainer.revalidate();
-        userProcessContainer.repaint();
+    ManageEnterprise panel = new ManageEnterprise(userProcessContainer, getDefaultNetwork());
+    userProcessContainer.add("ManageEnterprisePanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "ManageEnterprisePanel");
     }//GEN-LAST:event_btnManageEnterpriseActionPerformed
 
     private void btnManageRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageRolesActionPerformed
-        // 获取默认的 Enterprise 和 Organization
-        Model.Enterprise.Enterprise defaultEnterprise = getDefaultEnterprise();
-        Model.Organization.Organization defaultOrganization = getDefaultOrganization();
-
-        if (defaultOrganization != null && defaultEnterprise != null) {
-            // 获取 RoleDirectory，如果不存在则创建
-            Model.Role.RoleDirectory roleDirectory = defaultOrganization.getRoleDirectory();
-            if (roleDirectory == null) {
-                roleDirectory = new Model.Role.RoleDirectory();
-                defaultOrganization.setRoleDirectory(roleDirectory);
-            }
-
-            // ✅ 按照其他按钮的模式：清空容器并添加新面板
-            userProcessContainer.removeAll();
-            ManageRoles manageRolesPanel = new ManageRoles(
-                userProcessContainer, 
-                defaultEnterprise, 
-                defaultOrganization, 
-                roleDirectory
-            );
-            userProcessContainer.add(manageRolesPanel);
-            userProcessContainer.validate();
-            userProcessContainer.repaint();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Please create a Network, Enterprise, and Organization first before managing roles.");
-        }
+    ManageRoles panel = new ManageRoles(
+        userProcessContainer, 
+        getDefaultEnterprise(), 
+        getDefaultOrganization(), 
+        getDefaultOrganization().getRoleDirectory()
+    );
+    userProcessContainer.add("ManageRolesPanel", panel);
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "ManageRolesPanel");
     }//GEN-LAST:event_btnManageRolesActionPerformed
     // 辅助方法
-    private Model.Network.Network getDefaultNetwork() {
-        if (system.getNetworkDirectory().getNetworkList() != null &&
-        !system.getNetworkDirectory().getNetworkList().isEmpty()) {
-            return system.getNetworkDirectory().getNetworkList().get(0);
-        }
-        return null;
-    }
+public Network getDefaultNetwork() {
+    return network;
+}
 
-    private Model.Enterprise.Enterprise getDefaultEnterprise() {
-        Model.Network.Network network = getDefaultNetwork();
-        if (network != null && network.getEnterpriseDirectory() != null &&
-            !network.getEnterpriseDirectory().getEnterpriseList().isEmpty()) {
-            return network.getEnterpriseDirectory().getEnterpriseList().get(0);
-        }
-        return null;
-    }
+public Enterprise getDefaultEnterprise() {
+    return enterprise;
+}
+
+public Organization getDefaultOrganization() {
+    return organization;
+}
+
 
     private Model.Organization.OrganizationDirectory getDefaultOrganizationDirectory() {
         Model.Enterprise.Enterprise enterprise = getDefaultEnterprise();
@@ -236,13 +232,6 @@ public class AdminWorkAreaPanel extends javax.swing.JPanel {
         return null;
     }
 
-    private Model.Organization.Organization getDefaultOrganization() {
-        Model.Organization.OrganizationDirectory orgDir = getDefaultOrganizationDirectory();
-        if (orgDir != null && !orgDir.getOrganizationList().isEmpty()) {
-            return orgDir.getOrganizationList().get(0);
-        }
-        return null;
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnManageEnterprise;
     private javax.swing.JButton btnManageNetwork;

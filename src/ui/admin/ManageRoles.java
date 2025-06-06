@@ -7,9 +7,11 @@ package ui.admin;
 import Model.EcoSystem;
 import Model.Enterprise.Enterprise;
 import Model.Organization.Organization;
+import Model.Role.AdminRole;
 import Model.Role.Role;
 import Model.Role.RoleDirectory;
 import Model.User.UserAccount;
+import java.awt.CardLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -33,7 +35,6 @@ public class ManageRoles extends javax.swing.JPanel {
         this.roleDirectory = roleDirectory;
         initComponents();
         populateTable();
-        populateComboBoxes();
     }
 
     private void populateTable() {
@@ -53,66 +54,8 @@ public class ManageRoles extends javax.swing.JPanel {
         }
     }
 
-private void populateComboBoxes() {
-    // 填充预定义角色到创建角色下拉框
-    cmbcreateRoleOrganization.removeAllItems();
-    cmbcreateRoleOrganization.addItem("Select Organization");
-    if (enterprise != null) {
-        for (Organization org : enterprise.getOrganizations().getOrganizationList()) {
-            cmbcreateRoleOrganization.addItem(org.getOrganizationName());
-        }
-    }
-    
-    cmbcreateRoleEnterprise.removeAllItems();
-    cmbcreateRoleEnterprise.addItem("Select Enterprise");
-    if (enterprise != null) {
-        cmbcreateRoleEnterprise.addItem(enterprise.getName());
-        cmbcreateRoleEnterprise.setSelectedItem(enterprise.getName());
-    }
 
-    cmbSearch.removeAllItems();
-    cmbSearch.addItem("All");
-    cmbSearch.addItem("Last 3 days");
-    cmbSearch.addItem("Last 7 days");
-    cmbSearch.addItem("Last 30 days");
 
-    cmbViewRoleOrganization.removeAllItems();
-    cmbViewRoleOrganization.addItem("Select Organization");
-    if (enterprise != null) {
-        for (Organization org : enterprise.getOrganizations().getOrganizationList()) {
-            cmbViewRoleOrganization.addItem(org.getOrganizationName());
-        }
-    }
-
-    cmbViewRoleEnterprise.removeAllItems();
-    cmbViewRoleEnterprise.addItem("Select Enterprise");
-    if (enterprise != null) {
-        cmbViewRoleEnterprise.addItem(enterprise.getName());
-    }
-    
-    // 添加预定义角色到系统中
-    initializePredefinedRoles();
-}
-
-private void initializePredefinedRoles() {
-    String[] predefinedRoles = {
-        "System Admin", "Doctor", "Nurse", "Payroll Staff", 
-        "Resource Analyst", "Dispatcher", "Responder", 
-        "Logistics Manager", "Delivery Staff", "Donation Coordinator", 
-        "Supply Chain Manager", "Donor"
-    };
-    
-    for (String roleName : predefinedRoles) {
-        // 检查角色是否已存在，避免重复添加
-        if (roleDirectory.findRoleByName(roleName) == null) {
-            String roleId = "ROLE_" + roleName.replace(" ", "_").toUpperCase();
-            boolean isAdmin = "System Admin".equals(roleName);
-            String description = "Predefined role: " + roleName;
-            
-            roleDirectory.createRole(roleId, roleName, description, isAdmin);
-        }
-    }
-}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -143,7 +86,6 @@ private void initializePredefinedRoles() {
         jLabel21 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        cmbSearch = new javax.swing.JComboBox<>();
         btnModify = new javax.swing.JButton();
         jLabel19 = new javax.swing.JLabel();
         btnDelete = new javax.swing.JButton();
@@ -155,6 +97,8 @@ private void initializePredefinedRoles() {
         cmbcreateRoleEnterprise = new javax.swing.JComboBox<>();
         cmbViewRoleOrganization = new javax.swing.JComboBox<>();
         cmbViewRoleEnterprise = new javax.swing.JComboBox<>();
+        txtSearch = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         jLabel2.setText("Manage Roles");
@@ -221,9 +165,7 @@ private void initializePredefinedRoles() {
         jLabel7.setText("Description:");
 
         jLabel12.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
-        jLabel12.setText("Search:");
-
-        cmbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "3 days", "7 days", "30 days" }));
+        jLabel12.setText("Search by id:");
 
         btnModify.setText("Modify");
         btnModify.addActionListener(new java.awt.event.ActionListener() {
@@ -263,6 +205,13 @@ private void initializePredefinedRoles() {
 
         cmbViewRoleEnterprise.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
+        btnSearch.setText("Search");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -276,10 +225,6 @@ private void initializePredefinedRoles() {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addGap(142, 142, 142)
-                                .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel5)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -293,9 +238,21 @@ private void initializePredefinedRoles() {
                                         .addGap(81, 81, 81)
                                         .addComponent(txtcreateRoleDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(76, 76, 76)
-                                    .addComponent(txtcreateRoleName, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(73, 73, 73))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel12)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(3, 3, 3)
+                                            .addComponent(txtcreateRoleName, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(btnSearch)))))
                             .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -350,8 +307,9 @@ private void initializePredefinedRoles() {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12))
+                            .addComponent(jLabel12)
+                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnSearch))
                         .addGap(35, 35, 35)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -413,12 +371,8 @@ private void initializePredefinedRoles() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-    // Navigate back to AdminWorkAreaPanel
-        userProcessContainer.removeAll();
-        userProcessContainer.add(new AdminWorkAreaPanel(userProcessContainer, 
-            getEcoSystemFromOrganization(), getCurrentUserAccount()));
-        userProcessContainer.validate();
-        userProcessContainer.repaint();
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "AdminWorkAreaPanel");
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -438,7 +392,8 @@ private void initializePredefinedRoles() {
 
         // Create new role
         String roleId = "ROLE_" + System.currentTimeMillis();
-        Role newRole = roleDirectory.createRole(roleId, roleName, description, isAdmin);
+        Role newRole = new AdminRole();
+        roleDirectory.addRole(newRole);
 
         if (newRole != null) {
             populateTable();
@@ -500,7 +455,7 @@ private void initializePredefinedRoles() {
         Role role = roleDirectory.findRoleById(roleId);
         
         if (role != null) {
-            roleDirectory.removeRole(role);
+            roleDirectory.removeRole(roleId);
             populateTable();
             clearViewForm();
             JOptionPane.showMessageDialog(this, "Role deleted successfully");
@@ -549,6 +504,35 @@ private void initializePredefinedRoles() {
     }
     }//GEN-LAST:event_btnViewDetailsActionPerformed
 
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // search role by id
+            String keyword = txtSearch.getText().trim();
+
+    if (keyword.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please enter Role ID to search.");
+        return;
+    }
+
+    // 假设你有 roleDirectory 对象
+    Role matchedRole = roleDirectory.getRoleList().stream()
+        .filter(role -> role.getId().equalsIgnoreCase(keyword))
+        .findFirst()
+        .orElse(null);
+
+    DefaultTableModel model = (DefaultTableModel) tblManageRoles.getModel();
+    model.setRowCount(0);
+
+    if (matchedRole != null) {
+        model.addRow(new Object[] {
+            matchedRole.getId(),
+            matchedRole.getClass().getSimpleName(),
+            matchedRole.getDescription()
+        });
+    } else {
+        JOptionPane.showMessageDialog(this, "No matching role found.");
+    }
+    }//GEN-LAST:event_btnSearchActionPerformed
+
 private void clearCreateForm() {
     txtcreateRoleName.setText("");
     txtcreateIsAdmin.setText("");
@@ -584,8 +568,8 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JButton btnExportToCSV;
     private javax.swing.JButton btnModify;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnViewDetails;
-    private javax.swing.JComboBox<String> cmbSearch;
     private javax.swing.JComboBox<String> cmbViewRoleEnterprise;
     private javax.swing.JComboBox<String> cmbViewRoleOrganization;
     private javax.swing.JComboBox<String> cmbcreateRoleEnterprise;
@@ -609,6 +593,7 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JTextField txtContactEmail5;
     private javax.swing.JTextField txtContactEmail6;
     private javax.swing.JTextField txtDonorName6;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtcreateIsAdmin;
     private javax.swing.JTextField txtcreateRoleDescription;
     private javax.swing.JTextField txtcreateRoleName;

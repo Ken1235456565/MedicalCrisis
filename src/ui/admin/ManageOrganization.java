@@ -9,6 +9,7 @@ import Model.Enterprise.Enterprise;
 import Model.Network.Network;
 import Model.Organization.Organization;
 import Model.Organization.OrganizationDirectory;
+import Model.Organization.OrganizationDirectory.OrganizationType;
 import Model.Person.ContactInfo;
 import Model.User.UserAccount;
 import java.awt.CardLayout;
@@ -33,7 +34,7 @@ public class ManageOrganization extends javax.swing.JPanel {
         this.ecoSystem = ecoSystem;
         initComponents();
         populateTable();
-        populateComboBoxes();
+        
     }
 
 private void populateTable() {
@@ -53,54 +54,7 @@ private void populateTable() {
     }
 }
 
-private void populateComboBoxes() {
-    cmbcreateType.removeAllItems();
-    for (Organization.Type type : Organization.Type.values()) {
-        cmbcreateType.addItem(type.getValue());
-    }
-    
-    cmbcreateManager.removeAllItems();
-    cmbcreateManager.addItem("Select Manager");
-    cmbcreateManager.addItem("Org Admin A");
-    cmbcreateManager.addItem("Org Admin B");
 
-    // ✅ 修改这部分：从 EcoSystem 获取所有 Enterprise
-    cmbcreateEnterpriseBelong.removeAllItems();
-    EcoSystem system = EcoSystem.getInstance();
-    for (Network network : system.getNetworkDirectory().getNetworkList()) {
-        for (Enterprise ent : network.getEnterpriseDirectory().getEnterpriseList()) {
-            cmbcreateEnterpriseBelong.addItem(ent.getName());
-        }
-    }
-    // 设置当前 Enterprise 为默认选中
-    if (enterprise != null) {
-        cmbcreateEnterpriseBelong.setSelectedItem(enterprise.getName());
-    }
-
-    cmbSearch.removeAllItems();
-    cmbSearch.addItem("All");
-    cmbSearch.addItem("Last 3 days");
-    cmbSearch.addItem("Last 7 days");
-    cmbSearch.addItem("Last 30 days");
-
-    cmbviewType.removeAllItems();
-    for (Organization.Type type : Organization.Type.values()) {
-        cmbviewType.addItem(type.getValue());
-    }
-
-    cmbViewManager.removeAllItems();
-    cmbViewManager.addItem("Select Manager");
-    cmbViewManager.addItem("Org Admin A");
-    cmbViewManager.addItem("Org Admin B");
-
-    // ✅ 修改这部分：同样从 EcoSystem 获取所有 Enterprise
-    cmbviewEnterprisebelong.removeAllItems();
-    for (Network network : system.getNetworkDirectory().getNetworkList()) {
-        for (Enterprise ent : network.getEnterpriseDirectory().getEnterpriseList()) {
-            cmbviewEnterprisebelong.addItem(ent.getName());
-        }
-    }
-}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -475,43 +429,67 @@ private void populateComboBoxes() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-    // Navigate back to AdminWorkAreaPanel
-    userProcessContainer.removeAll();
-    userProcessContainer.add(new AdminWorkAreaPanel(userProcessContainer, 
-        getEcoSystemFromOrganization(), getCurrentUserAccount()));
-    userProcessContainer.validate();
-    userProcessContainer.repaint();
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "AdminWorkAreaPanel");
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
-    String name = txtcreateOrgnizationName.getText();
-    String type = (String) cmbcreateType.getSelectedItem();
-    String description = txtcreateDescription.getText();
-    String managerName = (String) cmbcreateManager.getSelectedItem();
-    String location = txtCreateLocation.getText();
-    String contactNumber = txtCreateContactNumber.getText();
-    String contactEmail = txtCreateContactEmail.getText();
-    
-    //  修改：直接使用当前的 organizationDirectory 创建并添加
-    Organization newOrganization = organizationDirectory.createOrganization(
-        type.replace(" ", ""), name, null);
-        
-    if (newOrganization != null) {
-        newOrganization.setContactInfo(new ContactInfo(location, contactNumber, contactEmail));
-        newOrganization.setOrganizationName(name);
-        
-        //  确保组织被添加到正确的 Enterprise 中
-        if (enterprise != null) {
-            enterprise.addOrganization(newOrganization);
+        String name = txtcreateOrgnizationName.getText();
+        String typeStr = (String) cmbcreateType.getSelectedItem(); // e.g. "Clinical Services"
+        String description = txtcreateDescription.getText();
+        String managerName = (String) cmbcreateManager.getSelectedItem();
+        String location = txtCreateLocation.getText();
+        String contactNumber = txtCreateContactNumber.getText();
+        String contactEmail = txtCreateContactEmail.getText();
+
+        // 安全解析 typeStr 成为 OrganizationType enum
+        OrganizationType typeEnum = parseOrganizationType(typeStr);
+
+        if (typeEnum == null) {
+            JOptionPane.showMessageDialog(this, "Invalid organization type selected.");
+            return;
         }
-        
-        populateTable();
-        clearCreateForm();
-        JOptionPane.showMessageDialog(this, "Organization created successfully!");
-    } else {
-        JOptionPane.showMessageDialog(this, "Failed to create organization!");
-    }
+
+        // 构造 ContactInfo
+        ContactInfo contactInfo = new ContactInfo(location, contactNumber, contactEmail);
+
+        // 创建组织
+        Organization newOrganization = organizationDirectory.createOrganization(name, typeEnum, contactInfo);
+
+        if (newOrganization != null) {
+            newOrganization.setOrganizationName(name); // 可选，如果构造器里已设置可省略
+            populateTable();
+            clearCreateForm();
+            JOptionPane.showMessageDialog(this, "Organization created successfully!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to create organization!");
+        }
+
     }//GEN-LAST:event_btnCreateActionPerformed
+    private OrganizationType parseOrganizationType(String rawType) {
+        String normalized = rawType.replace(" ", "").toUpperCase();
+
+        switch (normalized) {
+            case "CLINICAL":
+            case "CLINICALSERVICES":
+                return OrganizationType.CLINICAL;
+            case "ADMINISTRATION":
+                return OrganizationType.ADMINISTRATION;
+            case "DONATION":
+                return OrganizationType.DONATION;
+            case "EMERGENCY":
+                return OrganizationType.EMERGENCY;
+            case "LOGISTICS":
+                return OrganizationType.LOGISTICS;
+            case "DELIVERY":
+                return OrganizationType.DELIVERY;
+            case "SUPPORT":
+            case "OPERATIONSSUPPORT":
+                return OrganizationType.SUPPORT;
+            default:
+                return null;
+        }
+    }
 
     private void btnModifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyActionPerformed
         int selectedRow = tblManageOrganization.getSelectedRow();
@@ -544,7 +522,7 @@ private void populateComboBoxes() {
                     "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    organizationDirectory.removeOrganization(org);
+                    organizationDirectory.removeOrganization(org.getOrganizationId());
                     populateTable();
                     clearViewForm();
                     JOptionPane.showMessageDialog(this, "Organization deleted successfully!");

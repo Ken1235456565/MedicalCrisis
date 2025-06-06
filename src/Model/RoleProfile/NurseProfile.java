@@ -18,4 +18,30 @@ public class NurseProfile implements RoleProfile {
         private String content;
         private String date;
     }
+
+    public String getNurseType() {
+        return nurseType;
+    }
+
+    public void setNurseType(String nurseType) {
+        this.nurseType = nurseType;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public List<ShiftNote> getShiftNotes() {
+        return shiftNotes;
+    }
+
+    public void setShiftNotes(List<ShiftNote> shiftNotes) {
+        this.shiftNotes = shiftNotes;
+    }
+    
+    
 }

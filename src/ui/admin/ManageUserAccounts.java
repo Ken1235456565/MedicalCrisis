@@ -5,14 +5,15 @@
 package ui.admin;
 
 import Model.EcoSystem;
-import Model.Employee.Employee;
 import Model.Organization.Organization;
-import Model.Employee.EmployeeDirectory;
 import Model.Person.ContactInfo;
+import Model.Person.Person;
+import Model.Person.PersonDirectory;
 import Model.Role.Role;
 import Model.Role.RoleDirectory;
 import Model.User.UserAccount;
 import Model.User.UserAccountDirectory;
+import java.awt.CardLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -25,15 +26,15 @@ public class ManageUserAccounts extends javax.swing.JPanel {
     private JPanel userProcessContainer;
     private Organization organization; // The organization for which user accounts are managed
     private UserAccountDirectory userAccountDirectory; // Directory of user accounts
-    private EmployeeDirectory employeeDirectory; // To select employees for user accounts
+    private PersonDirectory personDirectory; // Changed from EmployeeDirectory
     private RoleDirectory roleDirectory; // To select roles for user accounts
     private UserAccount currentUserAccount;
-    
+
     public ManageUserAccounts(JPanel userProcessContainer, Organization organization) {
         this.userProcessContainer = userProcessContainer;
         this.organization = organization;
         this.userAccountDirectory = organization.getUserAccountDirectory(); // Assuming Organization has a UserAccountDirectory
-        this.employeeDirectory = organization.getEmployeeDirectory(); // Assuming Organization has an EmployeeDirectory
+        this.personDirectory = organization.getPersonDirectory(); // Changed to getPersonDirectory()
         this.roleDirectory = organization.getRoleDirectory(); // Assuming Organization has a RoleDirectory
         initComponents();
         populateTable();
@@ -86,8 +87,8 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         txtcreateUserGender = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
-        cmbcreateOrganizationBelong = new javax.swing.JComboBox<>();
-        cmbViewOrganizationBelong = new javax.swing.JComboBox<>();
+        cmbcreateOrganization = new javax.swing.JComboBox<>();
+        cmbviewOrganization = new javax.swing.JComboBox<>();
         cmbcreateUserRole = new javax.swing.JComboBox<>();
         cmbviewUserRole = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -98,6 +99,10 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         txtcreateLastName = new javax.swing.JTextField();
         jLabel24 = new javax.swing.JLabel();
         txtviewLastName = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        txtcreateUserAccountName = new javax.swing.JTextField();
+        txtviewUserAccountName = new javax.swing.JTextField();
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 24)); // NOI18N
         jLabel2.setText("Manage User Accounts");
@@ -215,9 +220,9 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         jLabel22.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jLabel22.setText("Organization:");
 
-        cmbcreateOrganizationBelong.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        cmbcreateOrganization.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
-        cmbViewOrganizationBelong.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        cmbviewOrganization.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
         cmbcreateUserRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
@@ -235,6 +240,12 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         jLabel24.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jLabel24.setText("Last Name:");
 
+        jLabel25.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel25.setText("Useraccount Name:");
+
+        jLabel26.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel26.setText("Useraccount Name:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,21 +257,67 @@ public class ManageUserAccounts extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(84, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(81, 81, 81)
+                                    .addComponent(txtcreateUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(74, 74, 74)
-                                        .addComponent(cmbcreateUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(81, 81, 81)
+                                        .addComponent(txtcreateUserContactNumber))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel12)
-                                        .addGap(142, 142, 142)
-                                        .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel5))
-                                .addGap(63, 63, 63))
-                            .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(81, 81, 81)
+                                        .addComponent(txtcreateUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(76, 76, 76)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txtcreateUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cmbcreateOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(81, 81, 81)
+                                    .addComponent(txtcreateUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(65, 65, 65)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(81, 81, 81)
+                                    .addComponent(txtviewUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(76, 76, 76)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtviewUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(cmbviewOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(81, 81, 81)
+                                        .addComponent(txtviewUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(81, 81, 81)
+                                        .addComponent(txtviewUserContactNumber))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(81, 81, 81)
+                                        .addComponent(txtviewUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(259, 259, 259))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -269,95 +326,65 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(81, 81, 81)
-                                        .addComponent(txtcreateFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(65, 65, 65)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnExportToCSV)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                                .addComponent(btnDelete)
-                                .addGap(33, 33, 33)
-                                .addComponent(btnViewDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel13)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(81, 81, 81))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(62, 62, 62)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(cmbviewUserRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(txtviewFirstName, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                                        .addComponent(txtviewLastName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
-                                    .addGap(2, 2, 2)))
-                            .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(81, 81, 81)
-                                        .addComponent(txtcreateUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(81, 81, 81)
-                                            .addComponent(txtcreateUserContactNumber))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(81, 81, 81)
-                                            .addComponent(txtcreateUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(76, 76, 76)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtcreateUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cmbcreateOrganizationBelong, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(81, 81, 81)
-                                        .addComponent(txtcreateUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(65, 65, 65)
+                                        .addComponent(txtcreateFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGap(65, 65, 65)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(81, 81, 81)
-                                        .addComponent(txtviewUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(txtviewFirstName, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                                            .addComponent(txtviewLastName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtviewUserAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmbviewUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(585, 585, 585)
+                                    .addComponent(btnModify, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(77, 77, 77))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(2, 2, 2)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGap(76, 76, 76)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(txtviewUserAge, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(cmbViewOrganizationBelong, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel12)
+                                                    .addGap(142, 142, 142)
+                                                    .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(jLabel5))
+                                            .addGap(63, 63, 63)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                    .addComponent(btnExportToCSV)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(btnDelete)
+                                                    .addGap(33, 33, 33)
+                                                    .addComponent(btnViewDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                    .addComponent(jLabel13)
+                                                    .addGap(176, 176, 176))))
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(81, 81, 81)
-                                            .addComponent(txtviewUserGender, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(btnModify, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(81, 81, 81)
-                                                .addComponent(txtviewUserContactNumber))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(81, 81, 81)
-                                                .addComponent(txtviewUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                            .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(2, 2, 2)))
-                .addGap(73, 73, 73))
+                                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(74, 74, 74)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(cmbcreateUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtcreateUserAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGap(65, 65, 65)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGap(249, 249, 249))))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 845, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(73, 73, 73)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,26 +397,37 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12))
-                        .addGap(41, 41, 41)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4)
-                            .addComponent(cmbcreateUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnViewDetails)
                             .addComponent(btnExportToCSV)
                             .addComponent(btnDelete))
                         .addGap(41, 41, 41)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))
+                        .addGap(41, 41, 41)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtviewUserAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(cmbviewUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel26)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel25)
+                                .addComponent(txtcreateUserAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel19)
-                            .addComponent(cmbviewUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel4)
+                            .addComponent(cmbcreateUserRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtcreateFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -403,7 +441,6 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel24)
                         .addComponent(txtviewLastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
@@ -417,7 +454,7 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel18)
-                            .addComponent(cmbcreateOrganizationBelong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbcreateOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtcreateUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -429,9 +466,7 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtcreateUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11))
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSave))
+                            .addComponent(jLabel11)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel20)
@@ -443,7 +478,7 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel22)
-                            .addComponent(cmbViewOrganizationBelong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbviewOrganization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(8, 8, 8)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtviewUserLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -455,21 +490,20 @@ public class ManageUserAccounts extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtviewUserContactEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel17))
-                        .addGap(18, 18, 18)
-                        .addComponent(btnModify)))
-                .addGap(18, 18, 18)
+                            .addComponent(jLabel17))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSave)
+                    .addComponent(btnModify))
+                .addGap(27, 27, 27)
                 .addComponent(btnBack)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-    userProcessContainer.removeAll();
-    userProcessContainer.add(new AdminWorkAreaPanel(userProcessContainer, 
-        getEcoSystemFromOrganization(), getCurrentUserAccount()));
-    userProcessContainer.validate();
-    userProcessContainer.repaint();
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "AdminWorkAreaPanel");
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -478,25 +512,25 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Please select a user to delete");
         return;
     }
-    
-    int confirm = JOptionPane.showConfirmDialog(this, 
-        "Are you sure you want to delete this user account?", 
-        "Confirm Delete", 
+
+    int confirm = JOptionPane.showConfirmDialog(this,
+        "Are you sure you want to delete this user account?",
+        "Confirm Delete",
         JOptionPane.YES_NO_OPTION);
-    
+
     if (confirm == JOptionPane.YES_OPTION) {
         String userId = (String) tblManageUser.getValueAt(selectedRow, 0);
         UserAccount userAccount = userAccountDirectory.findUserAccountById(userId);
-        
+
         if (userAccount != null) {
-            userAccountDirectory.removeUserAccount(userAccount);
-            
-            // Also remove the associated employee
-            Employee employee = userAccount.getEmployee();
-            if (employee != null) {
-                employeeDirectory.removeEmployee(employee);
+            userAccountDirectory.removeUserAccount(userId); // Changed to remove by userId
+
+            // Also remove the associated person
+            Person person = userAccount.getPerson();
+            if (person != null) {
+                personDirectory.removePerson(person.getId()); // Changed to remove by personId
             }
-            
+
             populateTable();
             clearViewForm();
             JOptionPane.showMessageDialog(this, "User account deleted successfully");
@@ -510,56 +544,65 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Please select a user to modify");
         return;
     }
-    
+
     String userId = (String) tblManageUser.getValueAt(selectedRow, 0);
     UserAccount userAccount = userAccountDirectory.findUserAccountById(userId);
-    
+
     if (userAccount != null) {
+        String userAccountName = txtviewUserAccountName.getText().trim();
         String newRole = (String) cmbviewUserRole.getSelectedItem();
         String newGender = txtviewUserGender.getText().trim();
         String newAgeText = txtviewUserAge.getText().trim();
         String newLocation = txtviewUserLocation.getText().trim();
         String newContactNumber = txtviewUserContactNumber.getText().trim();
         String newContactEmail = txtviewUserContactEmail.getText().trim();
-        
-        Employee employee = userAccount.getEmployee();
-        if (employee != null) {
+        String organizationName = (String) cmbviewOrganization.getSelectedItem();        
+        String firstName = txtviewFirstName.getText().trim();
+        String lastName = txtviewLastName.getText().trim();
+
+
+        Person person = userAccount.getPerson();
+        if (person != null) {
             if (!newGender.isEmpty()) {
-                employee.getPerson().setGender(newGender);
+                person.setGender(newGender);
             }
-            
+
             if (!newAgeText.isEmpty()) {
                 try {
                     int age = Integer.parseInt(newAgeText);
-                    employee.getPerson().setAge(age);
+                    person.setAge(age);
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Invalid age format");
                     return;
                 }
             }
-            
+
+            // Ensure ContactInfo object exists before setting its properties
+            if (person.getContactInfo() == null) {
+                person.setContactInfo(new Model.Person.ContactInfo(null, null, null)); // Initialize if null
+            }
+
             if (!newLocation.isEmpty()) {
-                employee.getPerson().getContactInfo().setLocation(newLocation);
+                person.getContactInfo().setLocation(newLocation);
             }
-            
+
             if (!newContactNumber.isEmpty()) {
-                employee.getPerson().getContactInfo().setContactNumber(newContactNumber);
+                person.getContactInfo().setContactNumber(newContactNumber);
             }
-            
+
             if (!newContactEmail.isEmpty()) {
-                employee.getPerson().getContactInfo().setContactEmail(newContactEmail);
+                person.getContactInfo().setContactEmail(newContactEmail);
             }
-            
+
             // Update role if changed
             if (newRole != null && !newRole.equals("Select Role")) {
-                Role role = findRoleByName(newRole);
+                Role role = roleDirectory.findRoleByName(newRole); // Assuming findRoleByName is a method in RoleDirectory or accessible
                 if (role != null) {
                     userAccount.setRole(role);
-                    employee.setRole(role);
                 }
             }
         }
-        
+
         populateTable();
         clearViewForm();
         JOptionPane.showMessageDialog(this, "User account updated successfully");
@@ -567,27 +610,28 @@ public class ManageUserAccounts extends javax.swing.JPanel {
     }//GEN-LAST:event_btnModifyActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    String userAccountName = txtviewUserAccountName.getText().trim();
     String selectedRole = (String) cmbcreateUserRole.getSelectedItem();
     String gender = txtcreateUserGender.getText().trim();
     String ageText = txtcreateUserAge.getText().trim();
-    String organization = (String) cmbcreateOrganizationBelong.getSelectedItem();
+    String organizationName = (String) cmbcreateOrganization.getSelectedItem(); // Assuming you get the organization name
     String location = txtcreateUserLocation.getText().trim();
     String contactNumber = txtcreateUserContactNumber.getText().trim();
     String contactEmail = txtcreateUserContactEmail.getText().trim();
     String firstName = txtcreateFirstName.getText().trim();
-    String lastName = txtcreateLastName.getText().trim();
-    
+    String lastName = txtcreateLastName.getText().trim(); // This will not be used for Person's name if only firstName is used
+
     // Validation
     if (selectedRole == null || selectedRole.trim().isEmpty() || selectedRole.equals("Select Role")) {
         JOptionPane.showMessageDialog(this, "Please select a role");
         return;
     }
-    
+
     if (contactEmail.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Email is required");
         return;
     }
-    
+
     int age = 0;
     try {
         age = Integer.parseInt(ageText);
@@ -595,46 +639,41 @@ public class ManageUserAccounts extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Please enter a valid age");
         return;
     }
-    
+
     // Find the selected role
-    Role role = findRoleByName(selectedRole);
+    Role role = organization.getRoleDirectory().findRoleByName(selectedRole); // Access roleDirectory via organization
     if (role == null) {
         JOptionPane.showMessageDialog(this, "Selected role not found");
         return;
     }
-    
-    // Create employee first
-    ContactInfo contactInfo = new ContactInfo(contactEmail, contactNumber, location);
-    String employeeId = "EMP_" + System.currentTimeMillis();
-        Employee newEmployee = new Employee(
-        employeeId,
-        firstName,
-        lastName,
-        age,
-        gender,
-        contactInfo,
-        role
-    );
-    newEmployee.getPerson().setAge(age);
-    newEmployee.getPerson().setGender(gender);
-    newEmployee.getPerson().getContactInfo().setLocation(location);
-    newEmployee.getPerson().getContactInfo().setContactNumber(contactInfo.getContactNumber());
-    newEmployee.getPerson().getContactInfo().setContactEmail(contactEmail);
-    
-    employeeDirectory.addEmployee(newEmployee);
-    
+
+    // Create ContactInfo
+    ContactInfo contactInfo = new ContactInfo(location, contactNumber, contactEmail);
+
+    // Create Person
+    // The createPerson method in Organization generates its own ID and adds to its PersonDirectory
+    Person newPerson = organization.createPerson(firstName, gender, age, contactInfo);
+
+    if (newPerson == null) {
+        JOptionPane.showMessageDialog(this, "Failed to create person.");
+        return;
+    }
+
     // Create user account
     String username = contactEmail.split("@")[0]; // Use email prefix as username
     String password = "password123"; // Default password
-    UserAccount newUserAccount = userAccountDirectory.createUserAccount(
-        username, password, newEmployee, role);
     
+    // The createUserAccount method in Organization generates its own ID and adds to its UserAccountDirectory
+    UserAccount newUserAccount = organization.createUserAccount(username, password, role, newPerson);
+
     if (newUserAccount != null) {
         populateTable();
         clearCreateForm();
         JOptionPane.showMessageDialog(this, "User account created successfully");
     } else {
-        JOptionPane.showMessageDialog(this, "Failed to create user account");
+        // If user account creation fails, consider removing the created person if not needed without an account
+        // organization.getPersonDirectory().removePerson(newPerson.getId());
+        JOptionPane.showMessageDialog(this, "Failed to create user account. Username might already exist.");
     }
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -643,48 +682,53 @@ public class ManageUserAccounts extends javax.swing.JPanel {
     }//GEN-LAST:event_cmbSearchActionPerformed
 
     private void btnExportToCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportToCSVActionPerformed
-    StringBuilder csvContent = new StringBuilder();
+StringBuilder csvContent = new StringBuilder();
     csvContent.append("User ID,Username,Role,Gender,Age,Location,Contact Number,Email\n");
-    
+
     for (UserAccount userAccount : userAccountDirectory.getUserAccountList()) {
-        Employee employee = userAccount.getEmployee();
+        Person person = userAccount.getPerson(); // Changed from Employee employee
+        ContactInfo contactInfo = (person != null) ? person.getContactInfo() : null; // Get contact info with null check
+
         csvContent.append(userAccount.getUserId()).append(",")
                   .append(userAccount.getUsername()).append(",")
                   .append(userAccount.getRole().getName()).append(",")
-                  .append(employee != null ? employee.getPerson().getGender() : "").append(",")
-                  .append(employee != null ? employee.getPerson().getAge() : "").append(",")
-                  .append(employee != null ? employee.getPerson().getContactInfo().getLocation() : "").append(",")
-                  .append(employee != null ? employee.getPerson().getContactInfo().getContactNumber() : "").append(",")
-                  .append(employee != null ? employee.getPerson().getContactInfo().getContactEmail() : "").append("\n");
+                  .append(person != null ? person.getGender() : "").append(",") // Changed from employee.getPerson().getGender()
+                  .append(person != null ? person.getAge() : "").append(",")   // Changed from employee.getPerson().getAge()
+                  .append(contactInfo != null ? contactInfo.getLocation() : "").append(",") // Changed to use contactInfo and added null check
+                  .append(contactInfo != null ? contactInfo.getContactNumber() : "").append(",") // Changed to use contactInfo and added null check
+                  .append(contactInfo != null ? contactInfo.getContactEmail() : "").append("\n"); // Changed to use contactInfo and added null check
     }
-    
-    JOptionPane.showMessageDialog(this, "CSV export functionality would save:\n" + 
-                                 csvContent.toString().substring(0, Math.min(200, csvContent.length())) + "...");
+
+    JOptionPane.showMessageDialog(this, "CSV export functionality would save:\n" +
+                                   csvContent.toString().substring(0, Math.min(200, csvContent.length())) + "...");
     }//GEN-LAST:event_btnExportToCSVActionPerformed
 
     private void btnViewDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewDetailsActionPerformed
-    int selectedRow = tblManageUser.getSelectedRow();
+int selectedRow = tblManageUser.getSelectedRow();
     if (selectedRow < 0) {
         JOptionPane.showMessageDialog(this, "Please select a user to view details");
         return;
     }
-    
+
     String userId = (String) tblManageUser.getValueAt(selectedRow, 0);
     UserAccount userAccount = userAccountDirectory.findUserAccountById(userId);
-    
+
     if (userAccount != null) {
-        Employee employee = userAccount.getEmployee();
-        if (employee != null) {
+        Person person = userAccount.getPerson(); // Changed from Employee employee
+        if (person != null) {
             // Populate view fields
             cmbviewUserRole.setSelectedItem(userAccount.getRole().getName());
-            txtviewUserGender.setText(employee.getPerson().getGender());
-            txtviewUserAge.setText(String.valueOf(employee.getPerson().getAge()));
-            txtviewUserLocation.setText(employee.getPerson().getContactInfo().getLocation());
-            txtviewUserContactNumber.setText(employee.getPerson().getContactInfo().getContactNumber());
-            txtviewUserContactEmail.setText(employee.getPerson().getContactInfo().getContactEmail());
-            
+            txtviewUserGender.setText(person.getGender()); // Changed from employee.getPerson().getGender()
+            txtviewUserAge.setText(String.valueOf(person.getAge())); // Changed from employee.getPerson().getAge()
+
+            // Handle ContactInfo with null check
+            ContactInfo contactInfo = person.getContactInfo();
+            txtviewUserLocation.setText(contactInfo != null ? contactInfo.getLocation() : ""); // Changed to use person and added null check
+            txtviewUserContactNumber.setText(contactInfo != null ? contactInfo.getContactNumber() : ""); // Changed to use person and added null check
+            txtviewUserContactEmail.setText(contactInfo != null ? contactInfo.getContactEmail() : ""); // Changed to use person and added null check
+
             // Set organization combobox
-            cmbViewOrganizationBelong.setSelectedItem(organization.getOrganizationName());
+            cmbviewOrganization.setSelectedItem(organization.getOrganizationName());
         }
     }
     }//GEN-LAST:event_btnViewDetailsActionPerformed
@@ -692,16 +736,16 @@ public class ManageUserAccounts extends javax.swing.JPanel {
 private void populateTable() {
     DefaultTableModel model = (DefaultTableModel) tblManageUser.getModel();
     model.setRowCount(0);
-    
+
     if (userAccountDirectory != null) {
         for (UserAccount userAccount : userAccountDirectory.getUserAccountList()) {
-            Employee employee = userAccount.getEmployee();
+            Person person = userAccount.getPerson(); // Changed from Employee employee
             Object[] row = {
                 userAccount.getUserId(),
                 userAccount.getUsername(),
                 userAccount.getRole().getName(),
-                employee != null ? employee.getPerson().getGender() : "",
-                employee != null ? employee.getPerson().getContactInfo().getContactEmail() : ""
+                person != null ? person.getGender() : "", // Changed from employee.getPerson().getGender()
+                person != null && person.getContactInfo() != null ? person.getContactInfo().getContactEmail() : "" // Changed to use person and added null check for ContactInfo
             };
             model.addRow(row);
         }
@@ -723,11 +767,11 @@ private void populateComboBoxes() {
     }
     
     // Populate organization comboboxes
-    cmbcreateOrganizationBelong.removeAllItems();
-    cmbViewOrganizationBelong.removeAllItems();
+    cmbcreateOrganization.removeAllItems();
+    cmbviewOrganization.removeAllItems();
     if (organization != null) {
-        cmbcreateOrganizationBelong.addItem(organization.getOrganizationName());
-        cmbViewOrganizationBelong.addItem(organization.getOrganizationName());
+        cmbcreateOrganization.addItem(organization.getOrganizationName());
+        cmbviewOrganization.addItem(organization.getOrganizationName());
     }
 }
 
@@ -746,7 +790,7 @@ private void clearCreateForm() {
     cmbcreateUserRole.setSelectedIndex(0);
     txtcreateUserGender.setText("");
     txtcreateUserAge.setText("");
-    cmbcreateOrganizationBelong.setSelectedIndex(0);
+    cmbcreateOrganization.setSelectedIndex(0);
     txtcreateUserLocation.setText("");
     txtcreateUserContactNumber.setText("");
     txtcreateUserContactEmail.setText("");
@@ -756,7 +800,7 @@ private void clearViewForm() {
     cmbviewUserRole.setSelectedIndex(0);
     txtviewUserGender.setText("");
     txtviewUserAge.setText("");
-    cmbViewOrganizationBelong.setSelectedIndex(0);
+    cmbviewOrganization.setSelectedIndex(0);
     txtviewUserLocation.setText("");
     txtviewUserContactNumber.setText("");
     txtviewUserContactEmail.setText("");
@@ -784,9 +828,9 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnViewDetails;
     private javax.swing.JComboBox<String> cmbSearch;
-    private javax.swing.JComboBox<String> cmbViewOrganizationBelong;
-    private javax.swing.JComboBox<String> cmbcreateOrganizationBelong;
+    private javax.swing.JComboBox<String> cmbcreateOrganization;
     private javax.swing.JComboBox<String> cmbcreateUserRole;
+    private javax.swing.JComboBox<String> cmbviewOrganization;
     private javax.swing.JComboBox<String> cmbviewUserRole;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -804,6 +848,8 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -814,6 +860,7 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JTable tblManageUser;
     private javax.swing.JTextField txtcreateFirstName;
     private javax.swing.JTextField txtcreateLastName;
+    private javax.swing.JTextField txtcreateUserAccountName;
     private javax.swing.JTextField txtcreateUserAge;
     private javax.swing.JTextField txtcreateUserContactEmail;
     private javax.swing.JTextField txtcreateUserContactNumber;
@@ -821,6 +868,7 @@ private EcoSystem getEcoSystemFromOrganization() {
     private javax.swing.JTextField txtcreateUserLocation;
     private javax.swing.JTextField txtviewFirstName;
     private javax.swing.JTextField txtviewLastName;
+    private javax.swing.JTextField txtviewUserAccountName;
     private javax.swing.JTextField txtviewUserAge;
     private javax.swing.JTextField txtviewUserContactEmail;
     private javax.swing.JTextField txtviewUserContactNumber;

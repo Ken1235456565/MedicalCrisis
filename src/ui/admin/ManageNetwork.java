@@ -8,6 +8,7 @@ import Model.EcoSystem;
 import Model.Network.Network;
 import Model.Person.ContactInfo;
 import Model.User.UserAccount;
+import java.awt.CardLayout;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -30,13 +31,13 @@ public class ManageNetwork extends javax.swing.JPanel {
         this.ecoSystem = ecoSystem;
         initComponents(); 
         populateTable();
-        populateComboBoxes();
+        
     }
 
     private void populateTable() {
         DefaultTableModel model = (DefaultTableModel) tblManageNetwork.getModel();
         model.setRowCount(0);
-        for (Network network : ecoSystem.getNetworkDirectory().getNetworkList()) {
+        for (Network network : ecoSystem.getNetworkDirectory().getAllNetworks()) {
             Object[] row = {
                 network.getId(),
                 network.getName(),
@@ -48,35 +49,7 @@ public class ManageNetwork extends javax.swing.JPanel {
         }
     }
 
-    private void populateComboBoxes() {
-        cmbCreateType.removeAllItems();
-        cmbCreateType.addItem("Healthcare");
-        cmbCreateType.addItem("Education");
-        cmbCreateType.addItem("Commerce");
-        cmbCreateType.addItem("Public Services");
-        
-        cmbcreateManager.removeAllItems();
-        cmbcreateManager.addItem("Select Manager");
-        cmbcreateManager.addItem("Admin User A");
-        cmbcreateManager.addItem("Admin User B");
-
-        cmbSearch.removeAllItems();
-        cmbSearch.addItem("All");
-        cmbSearch.addItem("Last 3 days");
-        cmbSearch.addItem("Last 7 days");
-        cmbSearch.addItem("Last 30 days");
-        
-        cmbViewType.removeAllItems();
-        cmbViewType.addItem("Healthcare");
-        cmbViewType.addItem("Education");
-        cmbViewType.addItem("Commerce");
-        cmbViewType.addItem("Public Services");
-        
-        cmbviewManager.removeAllItems();
-        cmbviewManager.addItem("Select Manager");
-        cmbviewManager.addItem("Admin User A");
-        cmbviewManager.addItem("Admin User B");
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -436,11 +409,8 @@ public class ManageNetwork extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-    userProcessContainer.removeAll();
-    userProcessContainer.add(new AdminWorkAreaPanel(userProcessContainer, 
-        ecoSystem, getCurrentUserAccount()));
-    userProcessContainer.validate();
-    userProcessContainer.repaint();
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "AdminWorkAreaPanel");
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
@@ -510,7 +480,7 @@ public class ManageNetwork extends javax.swing.JPanel {
         StringBuilder csvContent = new StringBuilder();
         csvContent.append("Network ID,Network Name,Type,Description,Manager\n");
         
-        for (Network network : ecoSystem.getNetworkDirectory().getNetworkList()) {
+        for (Network network : ecoSystem.getNetworkDirectory().getAllNetworks()) {
             csvContent.append(network.getId()).append(",")
                       .append(network.getName()).append(",")
                       .append(network.getType()).append(",")
@@ -547,7 +517,7 @@ if (searchFilter == null) return;
 DefaultTableModel model = (DefaultTableModel) tblManageNetwork.getModel();
 model.setRowCount(0);
 
-for (Network network : ecoSystem.getNetworkDirectory().getNetworkList()) {
+for (Network network : ecoSystem.getNetworkDirectory().getAllNetworks()) {
     boolean shouldInclude = switch (searchFilter) {
         case "Last 3 days", "Last 7 days", "Last 30 days" -> true;
         case "All" -> true;

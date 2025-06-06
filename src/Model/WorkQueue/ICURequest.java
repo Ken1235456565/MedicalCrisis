@@ -1,6 +1,6 @@
 package Model.WorkQueue;
 
-import Model.Organization.ClinicalServicesUnit.Patient;
+import Model.Patient.Patient;
 import java.util.Date;
 
 public class ICURequest extends WorkRequest {

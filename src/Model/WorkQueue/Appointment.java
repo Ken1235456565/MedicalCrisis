@@ -1,7 +1,7 @@
 package Model.WorkQueue;
 
 import Model.Person.Person;
-import Model.Organization.ClinicalServicesUnit.Patient;
+import Model.Patient.Patient;
 import java.util.Date;
 
 public class Appointment extends WorkRequest {

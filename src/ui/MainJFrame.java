@@ -4,13 +4,14 @@
  */
 package ui;
 
+import Model.ComponentFactory;
 import Model.Enterprise.Enterprise;
 import Model.Network.Network;
 import Model.Network.NetworkDirectory; // Corrected import
 import Model.Organization.Organization;
 import Model.Role.Role;
 import Model.User.UserAccount;
-import Model.ConfigureASystem; // For initializing the system data
+import Model.ConfigurationContext; // For initializing the system data
 import Model.EcoSystem;
 import Model.Organization.DonationManagementUnit;
 import javax.swing.JPanel;
@@ -22,8 +23,10 @@ import Model.Role.AdminRole;
 import Model.Role.DeliveryStaffRole;
 import Model.Role.DoctorRole;
 import Model.Role.DonationCoordinatorRole;
+import Model.Role.DonorRole;
 import Model.Role.EmergencyDispatcherRole;
 import Model.Role.EmergencyResponderRole;
+import Model.Role.EquipmentTechnicianRole;
 import Model.Role.LogisticsManagerRole;
 import Model.Role.NurseRole;
 import Model.Role.PayrollStaffRole;
@@ -64,18 +67,25 @@ public MainJFrame() {
     this.setResizable(false);
     this.setSize(1400, 1000);
 
-    system = ConfigureASystem.configure();
+    // 1. 初始化 EcoSystem 和数据结构
+    this.system = system; 
+    ComponentFactory initializer = new ComponentFactory();
+    initializer.initializeData();
 
-    // 设置 RightPanel 为 CardLayout（你已画好）
-    RightPanel.setLayout(new CardLayout());
-    this.userProcessContainer = RightPanel;
-
-    // 设定为右侧组件
+    // 2. 设置右侧为 CardLayout 区域
+    userProcessContainer = new JPanel(new CardLayout());  // ⬅️ 显式创建 CardLayout 容器
     splitPanel.setRightComponent(userProcessContainer);
+    splitPanel.setLeftComponent(LoginPanel); 
 
-    // LoginPanel
-    ((CardLayout) userProcessContainer.getLayout()).show(userProcessContainer, "LoginPanel");
+    // 4. 加载欢迎页或空页
+    JPanel emptyPanel = new JPanel();  // 你可以替换成 new WelcomePanel() 如果有的话
+    userProcessContainer.add("EmptyPanel", emptyPanel);
+
+    // 5. 显示初始页
+    ((CardLayout) userProcessContainer.getLayout()).show(userProcessContainer, "EmptyPanel");
 }
+
+
 
 
 
@@ -206,82 +216,101 @@ public MainJFrame() {
     }
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+    String username = txtUsername.getText();
+    String password = txtPassword.getText();
 
-        UserAccount authenticatedUser = null;
-        Organization currentOrg = null;
-        Enterprise enterprise = null;
+    UserAccount authenticatedUser = null;
+    Organization currentOrg = null;
+    Enterprise enterprise = null;
 
-        // Try to authenticate the user across all organizations' user account directories
-        for (Network network : system.getNetworkDirectory().getNetworkList()) {
-            for (Enterprise ent : network.getEnterpriseDirectory().getEnterpriseList()) {
-                for (Organization org : ent.getOrganizations().getOrganizationList()) {
-                    authenticatedUser = org.getUserAccountDirectory().authenticateUser(username, password);
-                    if (authenticatedUser != null) {
-                        currentOrg = org;
-                        enterprise = ent; // ✅ 一旦找到 org，也记录它所在的 enterprise
-                        break;
-                    }
-                }
+    for (Network network : system.getNetworkDirectory().getAllNetworks()) { // Assuming getAllNetworks() exists
+        for (Enterprise ent : network.getEnterpriseDirectory().getAllEnterprises()) { // Assuming getAllEnterprises() exists
+            for (Organization org : ent.getOrganizations().getAllOrganizations()) { // Assuming getAllOrganizations() exists
+                authenticatedUser = org.getUserAccountDirectory().authenticateUser(username, password);
                 if (authenticatedUser != null) {
-                    break;
+                    currentOrg = org;
+                    enterprise = ent; // Found organization and its enterprise
+                    break; // Exit organization loop
                 }
             }
             if (authenticatedUser != null) {
-                break;
+                break; // Exit enterprise loop
             }
         }
-
-        // If not found in any organization, try the system's user account directory (for sysadmin)
-        if (authenticatedUser == null) {
-            authenticatedUser = system.getUserAccountDirectory().authenticateUser(username, password);
+        if (authenticatedUser != null) {
+            break; // Exit network loop
         }
+    }
 
-        if (authenticatedUser == null) {
-            JOptionPane.showMessageDialog(this, "Invalid credentials. Please check username and password.");
-            return;
-        }
+    // If not found in any organization, try the system's user account directory (for sysadmin or public data manager)
+    if (authenticatedUser == null) {
+        // IMPORTANT: This assumes UserAccountDirectory.authenticateUser(username, password) exists
+        authenticatedUser = system.getUserAccountDirectory().authenticateUser(username, password);
+        // For system-level users, currentOrg and enterprise might be null or set specifically based on their role
+        // For AdminRole, currentOrg and enterprise are not strictly needed by the AdminWorkAreaPanel
+    }
 
-        Role role = authenticatedUser.getRole();
-        JPanel workAreaPanel = null;
-        
+    if (authenticatedUser == null) {
+        JOptionPane.showMessageDialog(this, "Invalid credentials. Please check username and password.");
+        return;
+    }
 
-        // Route to the appropriate work area based on the role
-        if (role instanceof AdminRole) {
-            workAreaPanel = new AdminWorkAreaPanel(userProcessContainer, system, authenticatedUser);
-        } else if (role instanceof DoctorRole) {
-            workAreaPanel = new HospitalDoctorWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof NurseRole) {
-            workAreaPanel = new HospitalNurseWorkArea(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof EmergencyDispatcherRole) {
-            workAreaPanel = new EmergencyDispatcherWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof EmergencyResponderRole) {
-            workAreaPanel = new EmergencyResponderWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof LogisticsManagerRole) {
-            workAreaPanel = new SupplyOfficerWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof DeliveryStaffRole) {
-            workAreaPanel = new DeliveryStaffWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else if (role instanceof DonationCoordinatorRole) {
+    Role role = authenticatedUser.getRole();
+    JPanel workAreaPanel = null;
+
+    // Route to the appropriate work area based on the role
+    if (role instanceof AdminRole) {
+        workAreaPanel = new AdminWorkAreaPanel(userProcessContainer, system, authenticatedUser);
+    } else if (role instanceof DoctorRole) {
+        // Doctor and Nurse roles are within ClinicalServicesUnit, which is part of HospitalEnterprise
+        workAreaPanel = new HospitalDoctorWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof NurseRole) {
+        workAreaPanel = new HospitalNurseWorkArea(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof EmergencyDispatcherRole) {
+        // EmergencyDispatcher is likely in EmergencyDispatchUnit (a ResourceAnalyzeUnit)
+        workAreaPanel = new EmergencyDispatcherWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof EmergencyResponderRole) {
+        // EmergencyResponder is in EmergencyResponseUnit
+        workAreaPanel = new EmergencyResponderWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof LogisticsManagerRole) {
+        // LogisticsManager is in SupplyChainManagementUnit
+        workAreaPanel = new SupplyOfficerWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof DeliveryStaffRole) {
+        // DeliveryStaff is in a Delivery Unit (a ResourceAnalyzeUnit)
+        workAreaPanel = new DeliveryStaffWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof DonationCoordinatorRole) {
+        // DonationCoordinator is in DonationManagementUnit
+        // Cast to DonationManagementUnit is appropriate here
         workAreaPanel = new DonationCoordinatorWorkAreaPanel(userProcessContainer, system, authenticatedUser, (DonationManagementUnit) currentOrg);
-        } else if (role instanceof PayrollStaffRole) {
-            workAreaPanel = new PayrollOfficerWorkAreaPanel(userProcessContainer, enterprise, authenticatedUser);
-        } else if (role instanceof ResourceAnalystRole) {
-            // Assuming ResourceAnalyst also has a work area panel, replace with actual
-            workAreaPanel = new PayrollOfficerWorkAreaPanel(userProcessContainer, enterprise, authenticatedUser); // Placeholder
-        } else if (role instanceof SupplychainManagerRole) {
-            // Assuming SupplychainManager also has a work area panel, replace with actual
-            workAreaPanel = new SupplyOfficerWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser); // Placeholder
-        } else if (role instanceof VisitorRole) {
-            workAreaPanel = new VisitorDonorWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
-        } else {
-            JOptionPane.showMessageDialog(this, "Unrecognized role type.");
-            return;
-        }
+    } else if (role instanceof PayrollStaffRole) {
+        // PayrollStaff is likely in OperationsSupportUnit within PublicHealthEnterprise
+        // Passing 'enterprise' might be suitable if the panel needs enterprise-level context
+        workAreaPanel = new PayrollOfficerWorkAreaPanel(userProcessContainer, enterprise, authenticatedUser);
+//    } else if (role instanceof ResourceAnalystRole) {        
+//        workAreaPanel = new ResourceAnalystWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof SupplychainManagerRole) {
+        // This is a placeholder, replace with actual SupplychainManagerWorkAreaPanel
+        workAreaPanel = new SupplyOfficerWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof EquipmentTechnicianRole) {
+        // EquipmentTechnician is in EquipmentTechnicianUnit
+        workAreaPanel = new EquipmentTechnicianWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else if (role instanceof DonorRole) {
+        // DonorRole might use the same panel as VisitorRole or a dedicated one
+        workAreaPanel = new VisitorDonorWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser); // Assuming common panel
+    } else if (role instanceof VisitorRole) {
+        workAreaPanel = new VisitorDonorWorkAreaPanel(userProcessContainer, currentOrg, authenticatedUser);
+    } else {
+        JOptionPane.showMessageDialog(this, "Unrecognized role type.");
+        return;
+    }
 
+    if (workAreaPanel != null) {
         userProcessContainer.add("WorkArea", workAreaPanel);
         ((CardLayout) userProcessContainer.getLayout()).show(userProcessContainer, "WorkArea");
+    } else {
+         JOptionPane.showMessageDialog(this, "Work area panel could not be loaded for this role.");
     }
+}
 
     /**
      * @param args the command line arguments

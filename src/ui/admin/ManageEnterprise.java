@@ -12,6 +12,7 @@ import Model.Enterprise.EnterpriseDirectory;
 import Model.Network.Network;
 import Model.Person.ContactInfo;
 import Model.User.UserAccount;
+import java.awt.CardLayout;
 import javax.swing.JPanel;
 /**
  *
@@ -29,7 +30,7 @@ public class ManageEnterprise extends javax.swing.JPanel {
         this.enterpriseDirectory = network.getEnterpriseDirectory();
         initComponents();
         populateTable();
-        populateComboBoxes();
+        
     }
     
     private void populateTable() {
@@ -50,50 +51,7 @@ public class ManageEnterprise extends javax.swing.JPanel {
     }
     
     // Method to populate comboboxes with data
-private void populateComboBoxes() {
-    cmbcreateType.removeAllItems();
-    for (Enterprise.EnterpriseType type : Enterprise.EnterpriseType.values()) {
-        cmbcreateType.addItem(type.name());
-    }
 
-    cmbcreateManager.removeAllItems();
-    cmbcreateManager.addItem("Select Manager");
-    cmbcreateManager.addItem("Manager A");
-    cmbcreateManager.addItem("Manager B");
-
-    // ✅ 修改这部分：从 EcoSystem 获取所有 Network
-    cmbcreateNetworkBelong.removeAllItems();
-    EcoSystem system = EcoSystem.getInstance();
-    for (Network net : system.getNetworkDirectory().getNetworkList()) {
-        cmbcreateNetworkBelong.addItem(net.getName());
-    }
-    // 设置当前 Network 为默认选中
-    if (network != null) {
-        cmbcreateNetworkBelong.setSelectedItem(network.getName());
-    }
-
-    cmbSearch.removeAllItems();
-    cmbSearch.addItem("All");
-    cmbSearch.addItem("Last 3 days");
-    cmbSearch.addItem("Last 7 days");
-    cmbSearch.addItem("Last 30 days");
-
-    cmbviewType.removeAllItems();
-    for (Enterprise.EnterpriseType type : Enterprise.EnterpriseType.values()) {
-        cmbviewType.addItem(type.name());
-    }
-
-    cmbViewManager.removeAllItems();
-    cmbViewManager.addItem("Select Manager");
-    cmbViewManager.addItem("Manager A");
-    cmbViewManager.addItem("Manager B");
-
-    // ✅ 修改这部分：同样从 EcoSystem 获取所有 Network
-    cmbViewNetworkBelong.removeAllItems();
-    for (Network net : system.getNetworkDirectory().getNetworkList()) {
-        cmbViewNetworkBelong.addItem(net.getName());
-    }
-}
     
 
     /**
@@ -490,12 +448,8 @@ private void populateComboBoxes() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-            // Navigate back to AdminWorkAreaPanel
-    userProcessContainer.removeAll();
-    userProcessContainer.add(new AdminWorkAreaPanel(userProcessContainer, 
-        getEcoSystemFromNetwork(), getUserAccountFromContext()));
-    userProcessContainer.validate();
-    userProcessContainer.repaint();
+    CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+    layout.show(userProcessContainer, "AdminWorkAreaPanel");
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
@@ -564,7 +518,7 @@ private void populateComboBoxes() {
                     "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    enterpriseDirectory.removeEnterprise(enterprise);
+                    enterpriseDirectory.removeEnterprise(enterpriseId);
                     populateTable();
                     clearViewForm();
                     JOptionPane.showMessageDialog(this, "Enterprise deleted successfully!");
